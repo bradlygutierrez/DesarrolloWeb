@@ -1,0 +1,69 @@
+create database MythicalStore
+go
+
+CREATE TABLE Rol (
+    id_rol INT PRIMARY KEY,
+    nombre NVARCHAR(50),
+	descripcion NVARCHAR(50)
+);
+
+CREATE TABLE Usuario (
+    id_usuario INT IDENTITY(1,1) PRIMARY KEY,
+    id_rol INT FOREIGN KEY REFERENCES Rol(id_rol) ON DELETE CASCADE,
+    email NVARCHAR(150),
+    clave NVARCHAR(30),
+    phone_number INT,
+    direccion NVARCHAR(150),
+	estado bit
+);
+
+CREATE TABLE Categoria (
+    id_categoria INT PRIMARY KEY,
+    nombre NVARCHAR(50)
+);
+
+CREATE TABLE Producto (
+    idProducto INT IDENTITY(1,1) PRIMARY KEY,
+    idCategoria INT,
+    descripcion NVARCHAR(MAX),
+    precio FLOAT,
+    talla_prenda NVARCHAR(50),
+    foto VARBINARY(MAX),
+    stock INT,
+    FOREIGN KEY (idCategoria) REFERENCES Categoria(id_categoria) ON DELETE CASCADE
+);
+
+CREATE TABLE Pago (
+    idPago INT IDENTITY(1,1) PRIMARY KEY,
+    id_usuario INT,
+    foto_pago VARBINARY(MAX),
+    FOREIGN KEY (id_usuario) REFERENCES Usuario(id_usuario) ON DELETE CASCADE
+);
+
+CREATE TABLE Pedido (
+    id_pedido INT IDENTITY(1,1) PRIMARY KEY,
+    idProducto INT,
+    idPago INT,
+	id_usuario INT,
+    estado BIT,
+    FOREIGN KEY (idProducto) REFERENCES Producto(idProducto) ON DELETE CASCADE,
+	FOREIGN KEY (id_usuario) References Usuario (id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (idPago) REFERENCES Pago(idPago) ON DELETE NO ACTION -- Cambiado a NO ACTION
+);
+
+CREATE TABLE Factura (
+    id_factura INT IDENTITY(1,1) PRIMARY KEY,
+    id_pedido INT,
+    datos_envio NVARCHAR(MAX),
+    total FLOAT,
+    FOREIGN KEY (id_pedido) REFERENCES Pedido(id_pedido) ON DELETE CASCADE
+);
+
+
+
+CREATE TABLE Ventas (
+    id_ventas INT IDENTITY(1,1) PRIMARY KEY,
+    id_factura INT,
+    FOREIGN KEY (id_factura) REFERENCES Factura(id_factura) ON DELETE CASCADE
+);
+
